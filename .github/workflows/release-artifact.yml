@@ -1,0 +1,66 @@
+name: Release Artifact
+
+on:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate release manifest
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          manifest = json.load(open(".chronary-release.json", "r", encoding="utf-8"))
+          if manifest["artifact"] != "examples":
+              raise SystemExit("Expected artifact examples")
+          if manifest["public_tag"] != os.environ["GITHUB_REF_NAME"]:
+              raise SystemExit("Tag mismatch between manifest and workflow ref")
+          PY
+          test -f RELEASE_NOTES.txt
+
+      - name: Pack source tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME}"
+          archive="chronary-examples_${tag}.tar.gz"
+          # Write archive to RUNNER_TEMP first so tar isn't reading a directory
+          # it's writing into (causes "tar: .: file changed as we read it").
+          # Then move into place for the upload + release steps.
+          tar --exclude='./.git' \
+              --exclude='./.github' \
+              --exclude='./.chronary-release.json' \
+              --exclude='./RELEASE_NOTES.txt' \
+              -czf "${RUNNER_TEMP}/${archive}" .
+          mv "${RUNNER_TEMP}/${archive}" "./${archive}"
+          sha256sum "${archive}" > "${archive}.sha256"
+
+      - name: Attest build provenance for source archive
+        # Free-tier orgs can only attest in PUBLIC repos. Auto-enables on flip.
+        if: github.event.repository.visibility == 'public'
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: 'chronary-examples_*.tar.gz'
+
+      - name: Create GitHub Release
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            chronary-examples_*.tar.gz \
+            chronary-examples_*.sha256 \
+            --title "chronary-examples ${GITHUB_REF_NAME}" \
+            --notes-file RELEASE_NOTES.txt
