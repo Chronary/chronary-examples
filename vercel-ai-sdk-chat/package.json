@@ -1,0 +1,22 @@
+{
+  "name": "vercel-ai-sdk-chat",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Chronary example — terminal chat using the Vercel AI SDK and the Chronary toolkit /ai-sdk adapter",
+  "type": "module",
+  "scripts": {
+    "start": "tsx index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^1.0.0",
+    "@chronary/sdk": "^0.1.0",
+    "@chronary/toolkit": "^0.1.0",
+    "ai": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

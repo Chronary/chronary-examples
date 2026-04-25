@@ -1,0 +1,21 @@
+{
+  "name": "webhook-handler-node",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Chronary example — Hono webhook receiver that verifies HMAC signatures and routes typed events",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/server.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@chronary/sdk": "^0.1.0",
+    "@hono/node-server": "^1.13.0",
+    "hono": "^4.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

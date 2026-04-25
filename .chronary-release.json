@@ -1,0 +1,9 @@
+{
+  "artifact": "examples",
+  "version": "2026.04.25+084672d",
+  "public_tag": "2026.04.25+084672d",
+  "private_source_sha": "084672d347ca04ab5bf33846bf2cc7ec2a305493",
+  "private_release_tag": "public-release/20260425.3-084672d",
+  "publish_registry": false,
+  "generated_at": "2026-04-25T01:38:43.843Z"
+}

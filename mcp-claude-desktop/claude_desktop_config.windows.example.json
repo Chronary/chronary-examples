@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "chronary": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "chronary-mcp"],
+      "env": {
+        "CHRONARY_API_KEY": "chr_sk_live_xxxxxxxxxxxxxxxxxxxxxxxx"
+      }
+    }
+  }
+}

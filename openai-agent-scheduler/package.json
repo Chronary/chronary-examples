@@ -1,0 +1,21 @@
+{
+  "name": "openai-agent-scheduler",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Chronary example — terminal agent that books a meeting using the OpenAI SDK and the Chronary toolkit /openai adapter",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@chronary/sdk": "^0.1.0",
+    "@chronary/toolkit": "^0.1.0",
+    "openai": "^4.70.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
