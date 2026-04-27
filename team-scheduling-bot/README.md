@@ -74,7 +74,7 @@ After it finishes, paste any of the printed `ical_url` values into Apple Calenda
 | Respond to proposal | `POST /v1/scheduling/proposals/:id/respond` |
 | Resolve proposal → event | `POST /v1/scheduling/proposals/:id/resolve` |
 
-Every endpoint is also exposed as an MCP tool, so an LLM can drive this same flow via tool calling — see [`vercel-ai-sdk-calendar-chat`](../vercel-ai-sdk-calendar-chat) and [`openai-agent-scheduler`](../openai-agent-scheduler).
+Every endpoint is also exposed as an MCP tool, so an LLM can drive this same flow via tool calling — see [`vercel-ai-sdk-chat`](../vercel-ai-sdk-chat) and [`openai-agent-scheduler`](../openai-agent-scheduler).
 
 ## Local development (pre-soft-launch)
 
