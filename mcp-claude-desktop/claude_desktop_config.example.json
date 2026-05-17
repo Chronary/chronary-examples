@@ -4,7 +4,7 @@
       "command": "npx",
       "args": ["-y", "chronary-mcp"],
       "env": {
-        "CHRONARY_API_KEY": "chr_sk_live_xxxxxxxxxxxxxxxxxxxxxxxx"
+        "CHRONARY_API_KEY": "chr_sk_xxxxxxxxxxxxxxxxxxxxxxxx"
       }
     }
   }

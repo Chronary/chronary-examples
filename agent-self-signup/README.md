@@ -2,15 +2,14 @@
 
 **An AI agent registers itself with Chronary. No human signup, no OAuth, no console visit.**
 
-This is the onramp that makes Chronary unique for autonomous agents. Your agent calls two endpoints, receives an email-delivered OTP, verifies, and walks away with its own org and live API key.
+This is the onramp that makes Chronary unique for autonomous agents. Your agent calls two endpoints, receives an email-delivered OTP, verifies, and walks away with its own org and API key.
 
 ```text
 $ npm start
 
 Org created:        org_8ab2…
 Agent created:      agt_v4j8kLmN
-Test-mode key:      chr_sk_test_…    ← usable now
-Live-mode key:      chr_sk_live_…    ← restricted until OTP verified
+API key:            chr_sk_…    ← restricted until OTP verified
 
 We sent a 6-digit code to you@example.com.
 Enter OTP: 482910
@@ -22,8 +21,8 @@ Authenticated as agent: Self-Signup Bot (agt_v4j8kLmN)
 
 ## What this demonstrates
 
-- **`POST /v1/agent/sign-up`** — unauthenticated. Returns `org_id`, `agent_id`, a `test_api_key` (usable immediately) and a restricted `api_key` (live mode, only valid for the verify endpoint).
-- **`POST /v1/agent/verify`** — authenticated with the restricted live key. Unlocks the same key for full API access.
+- **`POST /v1/agent/sign-up`** — unauthenticated. Returns `org_id`, `agent_id`, and a restricted `api_key` that is only valid for the verify endpoint.
+- **`POST /v1/agent/verify`** — authenticated with the restricted key. Unlocks the same key for full API access.
 - **Anti-enumeration design** — if the email is already registered, the response is opaque (`isAgentSignUpNewOrg` returns false, no credentials leaked).
 - **`tos_version`** — explicit consent to the terms version the agent reviewed.
 
@@ -47,7 +46,7 @@ npm start
 # check email, paste OTP at the prompt
 ```
 
-The script prints both keys at the end. Save the live key somewhere safe — it's shown once.
+The script prints the key at the end. Save it somewhere safe — it's shown once.
 
 ## Make it fully autonomous
 

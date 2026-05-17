@@ -1,9 +1,10 @@
 /**
  * Webhook receiver for Chronary events.
  *
- * Verifies the HMAC-SHA256 signature, parses the JSON, and dispatches to a
- * typed handler per event type. The same pattern works on any Hono-compatible
- * runtime (Node, Bun, Cloudflare Workers, Vercel Edge).
+ * Verifies the HMAC-SHA256 signature, reads X-Chronary-Event-Type, parses the
+ * raw payload JSON, and dispatches to a typed handler per event type. The same
+ * pattern works on any Hono-compatible runtime (Node, Bun, Cloudflare Workers,
+ * Vercel Edge).
  */
 
 import { serve } from '@hono/node-server';
@@ -24,7 +25,7 @@ app.post('/webhooks/chronary', async (c) => {
   try {
     event = await constructEvent(rawBody, c.req.raw.headers, secret);
   } catch (error) {
-    // Bad signature, expired timestamp, malformed JSON → 400. Chronary will
+    // Bad signature, expired timestamp, missing event type, malformed JSON -> 400. Chronary will
     // back off and retry: immediate, +1m, +5m, +30m before deactivating.
     const message = error instanceof ChronaryError ? error.message : 'verification failed';
     console.error(`✗ rejected: ${message}`);
@@ -49,7 +50,7 @@ async function handleEvent(event: WebhookEvent): Promise<void> {
       console.log(`✓ agent.created — ${(event.data.agent as { id: string }).id}`);
       break;
     case 'event.created':
-      console.log(`✓ event.created — ${(event.data.event as { id: string }).id} on ${event.data.calendar_id}`);
+      console.log(`✓ event.created — ${(event.data.event as { id: string }).id}`);
       break;
     case 'event.updated':
       console.log(`✓ event.updated — ${(event.data.event as { id: string }).id}`);

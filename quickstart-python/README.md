@@ -16,7 +16,7 @@ Event:    evt_9wKzYaB — Hello from Chronary @ 2026-04-25T15:00:00+00:00
 
 ## What this demonstrates
 
-- The four-line dance every Chronary integration starts with: create agent → create calendar → create event → list.
+- The four-line dance every Chronary integration starts with: register agent → create calendar → create event → list.
 - The Python SDK's typed resource clients (`client.agents`, `client.agents.calendars`, `client.events`).
 - The `ical_url` returned on every calendar — paste it into Apple Calendar / Google Calendar and your phone shows the agent's schedule.
 

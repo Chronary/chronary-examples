@@ -21,27 +21,27 @@ No code, no install — `npx -y chronary-mcp` runs the latest published version 
 
 1. Open `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) — create the file if it does not exist.
 2. Copy the contents of [`claude_desktop_config.example.json`](./claude_desktop_config.example.json) into it.
-3. Replace `chr_sk_live_…` with your real Chronary API key.
+3. Replace `chr_sk_…` with your real Chronary API key.
 4. Restart Claude Desktop.
 
 ### Claude Desktop (Windows)
 
 1. Open `%APPDATA%\Claude\claude_desktop_config.json` — create the file if it does not exist.
 2. Copy the contents of [`claude_desktop_config.windows.example.json`](./claude_desktop_config.windows.example.json) into it. The Windows variant wraps `npx` in `cmd /c` because Node's `spawn` cannot resolve `npx.cmd` directly.
-3. Replace `chr_sk_live_…` with your real Chronary API key.
+3. Replace `chr_sk_…` with your real Chronary API key.
 4. Restart Claude Desktop.
 
 ### Cursor
 
 1. Open `~/.cursor/mcp.json` (user-level) or `.cursor/mcp.json` (project-level) — create the file if it does not exist.
 2. Copy the contents of [`cursor.mcp.example.json`](./cursor.mcp.example.json) into it.
-3. Replace `chr_sk_live_…` with your real Chronary API key.
+3. Replace `chr_sk_…` with your real Chronary API key.
 4. Restart Cursor.
 
 ### Claude Code
 
 ```bash
-claude mcp add chronary --env CHRONARY_API_KEY=chr_sk_live_… npx -y chronary-mcp
+claude mcp add chronary --env CHRONARY_API_KEY=chr_sk_… npx -y chronary-mcp
 ```
 
 ## Verify

@@ -14,7 +14,7 @@ Listening for Chronary webhooks at http://localhost:3000/webhooks/chronary
 
 ## What this demonstrates
 
-- **`constructEvent(rawBody, headers, secret)`** — verifies signature + parses JSON in one call. Uses `crypto.subtle.verify` under the hood, so it runs on Node, Bun, Cloudflare Workers, Deno, and Vercel Edge with no extra deps.
+- **`constructEvent(rawBody, headers, secret)`** — verifies signature, reads `X-Chronary-Event-Type`, and returns `{ type, data }` where `data` is the parsed raw payload body. Uses `crypto.subtle.verify` under the hood, so it runs on Node, Bun, Cloudflare Workers, Deno, and Vercel Edge with no extra deps.
 - **Replay protection** — Chronary's `X-Timestamp` header is checked against a 5-minute tolerance. Old payloads are rejected.
 - **Typed event router** — the `WebhookEvent.type` discriminant covers all 17 event types Chronary emits today (`agent.*`, `event.*`, `event.hold_*`, `proposal.*`, `webhook.deactivated`).
 - **Retry-aware error handling** — 400 on bad signature (Chronary backs off and retries: immediate → +1m → +5m → +30m → deactivates after 50 failures); 500 on handler errors (also retried).
@@ -47,7 +47,7 @@ npm install
 npm start
 ```
 
-Trigger an event in your Chronary org (create an agent, schedule an event) and watch the console.
+Trigger an event in your Chronary org (register an agent, schedule an event) and watch the console.
 
 ## Idempotency
 

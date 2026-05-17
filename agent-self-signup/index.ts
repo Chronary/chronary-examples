@@ -5,7 +5,7 @@
  * gets its own org + key in two requests:
  *
  *   1. POST /v1/agent/sign-up    — unauthenticated, sends an OTP to email.
- *   2. POST /v1/agent/verify     — authenticated with the restricted live key
+ *   2. POST /v1/agent/verify     — authenticated with the restricted key
  *                                  returned in step 1; unlocks full access.
  */
 
@@ -37,22 +37,21 @@ if (!isAgentSignUpNewOrg(signUp)) {
 
 console.log(`Org created:        ${signUp.org_id}`);
 console.log(`Agent created:      ${signUp.agent_id}`);
-console.log(`Test-mode key:      ${signUp.test_api_key}    ← usable now`);
-console.log(`Live-mode key:      ${signUp.api_key}    ← restricted until OTP verified`);
+console.log(`API key:            ${signUp.api_key}    ← restricted until OTP verified`);
 console.log(`\nWe sent a 6-digit code to ${email}.`);
 
-// Step 2 — prompt for the OTP and verify with the restricted live key.
+// Step 2 — prompt for the OTP and verify with the restricted key.
 const rl = createInterface({ input: process.stdin, output: process.stdout });
 const otp = (await rl.question('Enter OTP: ')).trim();
 rl.close();
 
-// Construct a second client with the live key. Until OTP verification it can
-// only call /v1/agent/verify; after verification the same key unlocks the
+// Construct a second client with the restricted key. Until OTP verification it
+// can only call /v1/agent/verify; after verification the same key unlocks the
 // full API.
-const live = new Chronary({ apiKey: signUp.api_key });
-const verified = await live.agentAuth.verify({ otp });
+const authed = new Chronary({ apiKey: signUp.api_key });
+const verified = await authed.agentAuth.verify({ otp });
 console.log(`\n${verified.message}`);
 
-const me = await live.agents.list({ limit: 1 }).getPage(0, 1);
+const me = await authed.agents.list({ limit: 1 }).getPage(0, 1);
 console.log(`\nAuthenticated as agent: ${me.data[0]?.name ?? '(none)'} (${me.data[0]?.id})`);
 console.log('\nKeep this key safe — anything an org-level key can do, this can do.');
