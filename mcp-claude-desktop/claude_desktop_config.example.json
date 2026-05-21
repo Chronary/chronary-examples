@@ -2,7 +2,7 @@
   "mcpServers": {
     "chronary": {
       "command": "npx",
-      "args": ["-y", "chronary-mcp"],
+      "args": ["-y", "@chronary/mcp"],
       "env": {
         "CHRONARY_API_KEY": "chr_sk_xxxxxxxxxxxxxxxxxxxxxxxx"
       }

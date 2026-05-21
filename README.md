@@ -23,7 +23,7 @@ If you've never used Chronary before, follow this order:
 
 | Example | Stack | What it shows |
 |---|---|---|
-| [`mcp-claude-desktop`](./mcp-claude-desktop) | Config files · `chronary-mcp` over stdio | Drop-in MCP configs for Claude Desktop, Cursor, Claude Code. Zero code. |
+| [`mcp-claude-desktop`](./mcp-claude-desktop) | Config files · `@chronary/mcp` over stdio | Drop-in MCP configs for Claude Desktop, Cursor, Claude Code. Zero code. |
 | [`vercel-ai-sdk-chat`](./vercel-ai-sdk-chat) | TypeScript · Vercel AI SDK | Terminal chat using the toolkit's `/ai-sdk` adapter and `generateText({ tools })`. |
 | [`openai-agent-scheduler`](./openai-agent-scheduler) | TypeScript · OpenAI SDK | One-shot agent loop using the toolkit's `/openai` adapter. |
 

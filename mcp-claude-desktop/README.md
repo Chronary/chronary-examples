@@ -1,12 +1,12 @@
 # mcp-claude-desktop
 
-Drop-in MCP configurations that give Claude Desktop, Cursor, and Claude Code access to Chronary's 23 calendar tools through the [`chronary-mcp`](https://github.com/Chronary/chronary-mcp) stdio server.
+Drop-in MCP configurations that give Claude Desktop, Cursor, and Claude Code access to Chronary's 23 calendar tools through the [`@chronary/mcp`](https://github.com/Chronary/chronary-mcp) stdio server.
 
-No code, no install — `npx -y chronary-mcp` runs the latest published version on demand.
+No code, no install — `npx -y @chronary/mcp` runs the latest published version on demand.
 
 ## What this demonstrates
 
-- The `chronary-mcp` stdio server, built on the toolkit's `/mcp` adapter.
+- The `@chronary/mcp` stdio server, built on the toolkit's `/mcp` adapter.
 - One config snippet per host editor — pick the one that matches yours.
 - Cross-platform — separate example for Windows, where `npx` must be invoked through `cmd /c`.
 
@@ -41,7 +41,7 @@ No code, no install — `npx -y chronary-mcp` runs the latest published version 
 ### Claude Code
 
 ```bash
-claude mcp add chronary --env CHRONARY_API_KEY=chr_sk_… npx -y chronary-mcp
+claude mcp add chronary --env CHRONARY_API_KEY=chr_sk_… npx -y @chronary/mcp
 ```
 
 ## Verify
@@ -54,15 +54,15 @@ You: List my Chronary calendars.
 
 The model should call `list_calendars` and return your calendars.
 
-## Pre-soft-launch note
+## Local development (pointing at a workspace build)
 
-`chronary-mcp` is not yet published to npm — see [issue #222](https://github.com/Chronary/chronary/issues/222). Until it ships, point the config at a local build:
+If you're testing changes to `packages/mcp/` against a local checkout, point the config at the built artifact instead of `npx`:
 
 ```bash
 # from the monorepo root
 pnpm --filter @chronary/sdk build
 pnpm --filter @chronary/toolkit build
-pnpm --filter chronary-mcp build
+pnpm --filter @chronary/mcp build
 ```
 
 Then change the config's `command` / `args` to:
@@ -72,7 +72,7 @@ Then change the config's `command` / `args` to:
 "args": ["/absolute/path/to/agentservices/packages/mcp/dist/index.js"]
 ```
 
-Once `chronary-mcp` ships to npm, the `npx -y chronary-mcp` form Just Works.
+The published `npx -y @chronary/mcp` form is still the recommended path for everyday use — this section is only relevant if you're modifying the server itself.
 
 ## Files
 
@@ -82,4 +82,4 @@ Once `chronary-mcp` ships to npm, the `npx -y chronary-mcp` form Just Works.
 
 ---
 
-Last verified: 2026-04-24 against `chronary-mcp@0.1.0`.
+Last verified: 2026-05-20 against `@chronary/mcp@0.1.2`.
