@@ -1,9 +1,9 @@
 /**
  * Vercel AI SDK + Chronary toolkit — terminal chat.
  *
- * The toolkit's `/ai-sdk` adapter returns Chronary's 23 calendar tools as a
+ * The toolkit's `/ai-sdk` adapter returns Chronary's 47 calendar tools as a
  * `Record<string, Tool>` that drops straight into `generateText({ tools })`.
- * `maxSteps: 5` lets the model chain `list_calendars` → `check_availability`
+ * `maxSteps: 5` lets the model chain `list_calendars` → `find_meeting_time`
  * → `create_event` in a single user turn.
  */
 

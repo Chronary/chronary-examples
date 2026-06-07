@@ -15,7 +15,7 @@ bot ▸ I checked the team's availability and booked "Team sync" on Tuesday Apr 
 ## What this demonstrates
 
 - The toolkit's [`/ai-sdk` adapter](https://github.com/Chronary/chronary-toolkit) — pass `chronaryTools({ apiKey })` straight into `generateText({ tools })`.
-- Multi-step tool calls via `maxSteps: 5` so the model can chain `list_calendars` → `check_availability` → `create_event` in one turn.
+- Multi-step tool calls via `maxSteps: 5` so the model can chain `list_calendars` → `find_meeting_time` → `create_event` in one turn.
 - A pure-Node terminal loop with `readline` — no Next.js scaffolding to wade through.
 
 ## Prerequisites
