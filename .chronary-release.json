@@ -1,9 +1,9 @@
 {
   "artifact": "examples",
-  "version": "2026.07.14+da0d906",
-  "public_tag": "2026.07.14+da0d906",
-  "private_source_sha": "da0d906db5997fd7600873775ab1aca1101dc75a",
-  "private_release_tag": "public-release/20260714.5-da0d906",
+  "version": "2026.07.14+c04fbcb",
+  "public_tag": "2026.07.14+c04fbcb",
+  "private_source_sha": "c04fbcb0e653b263372527cfecc9fdd35ef0641d",
+  "private_release_tag": "public-release/20260714.6-c04fbcb",
   "publish_registry": false,
-  "generated_at": "2026-07-14T10:46:00.584Z"
+  "generated_at": "2026-07-14T17:59:21.087Z"
 }
