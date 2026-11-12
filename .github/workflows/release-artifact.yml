@@ -5,20 +5,27 @@ on:
     tags:
       - '*'
 
+# Least privilege (#1599): read-only by default; the release job raises
+# only the scopes its steps use.
 permissions:
-  contents: write
-  id-token: write
-  attestations: write
+  contents: read
 
 jobs:
   release:
+    # contents: write for `gh release create`; id-token + attestations for
+    # actions/attest-build-provenance (runs once the mirror is public).
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           fetch-depth: 0
+          # Nothing pushes with the checkout token, so keep it out of
+          # .git/config, where install and test scripts could read it (#1659).
+          persist-credentials: false
 
       - name: Validate release manifest
         run: |
@@ -53,11 +60,13 @@ jobs:
       - name: Attest build provenance for source archive
         # Free-tier orgs can only attest in PUBLIC repos. Auto-enables on flip.
         if: github.event.repository.visibility == 'public'
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2.4.0
         with:
           subject-path: 'chronary-examples_*.tar.gz'
 
       - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "${GITHUB_REF_NAME}" \
             chronary-examples_*.tar.gz \

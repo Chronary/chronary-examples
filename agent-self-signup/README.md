@@ -9,7 +9,7 @@ $ npm start
 
 Org created:        org_8ab2…
 Agent created:      agt_v4j8kLmN
-API key:            chr_sk_…    ← restricted until OTP verified
+API key:            chr_sk_…9f2c    ← restricted until OTP verified
 
 We sent a 6-digit code to you@example.com.
 Enter OTP: 482910
@@ -17,6 +17,8 @@ Enter OTP: 482910
 Full access unlocked
 
 Authenticated as agent: Self-Signup Bot (agt_v4j8kLmN)
+
+Store the key in your secret manager — anything an org-level key can do, this can do.
 ```
 
 ## What this demonstrates
@@ -46,7 +48,7 @@ npm start
 # check email, paste OTP at the prompt
 ```
 
-The script prints the key at the end. Save it somewhere safe — it's shown once.
+The script never prints the full key: it shows only the prefix and last four characters (`chr_sk_…9f2c`). The key itself is in `signUp.api_key` and is returned only once, so a real agent persists it to its secret manager or runtime environment (for example `CHRONARY_API_KEY`) at the marked spot at the end of [`index.ts`](./index.ts).
 
 ## Make it fully autonomous
 

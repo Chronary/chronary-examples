@@ -12,6 +12,12 @@
 import { createInterface } from 'node:readline/promises';
 import { Chronary, isAgentSignUpNewOrg } from '@chronary/sdk';
 
+/** Show a key's prefix and last 4 characters only — never log a full API key. */
+function maskKey(key: string): string {
+  const prefix = /^chr_[a-z]+_/.exec(key)?.[0] ?? '';
+  return `${prefix}…${key.slice(-4)}`;
+}
+
 const email = process.env.SIGNUP_EMAIL;
 if (!email) throw new Error('SIGNUP_EMAIL is not set');
 
@@ -37,7 +43,7 @@ if (!isAgentSignUpNewOrg(signUp)) {
 
 console.log(`Org created:        ${signUp.org_id}`);
 console.log(`Agent created:      ${signUp.agent_id}`);
-console.log(`API key:            ${signUp.api_key}    ← restricted until OTP verified`);
+console.log(`API key:            ${maskKey(signUp.api_key)}    ← restricted until OTP verified`);
 console.log(`\nWe sent a 6-digit code to ${email}.`);
 
 // Step 2 — prompt for the OTP and verify with the restricted key.
@@ -54,4 +60,8 @@ console.log(`\n${verified.message}`);
 
 const me = await authed.agents.list({ limit: 1 }).getPage(0, 1);
 console.log(`\nAuthenticated as agent: ${me.data[0]?.name ?? '(none)'} (${me.data[0]?.id})`);
-console.log('\nKeep this key safe — anything an org-level key can do, this can do.');
+
+// The full key lives only in `signUp.api_key` and is never shown again. A real
+// agent persists it here — to its secret manager or runtime environment
+// (e.g. CHRONARY_API_KEY) — instead of printing it.
+console.log('\nStore the key in your secret manager — anything an org-level key can do, this can do.');
