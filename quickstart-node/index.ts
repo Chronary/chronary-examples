@@ -5,19 +5,25 @@ if (!apiKey) throw new Error('CHRONARY_API_KEY is not set');
 
 const chronary = new Chronary({ apiKey });
 
-// 1. Register an agent. Three types: 'ai', 'human', 'resource'.
-const agent = await chronary.agents.create({
-  name: 'Quickstart Bot',
-  type: 'ai',
-});
+// 1. Reuse the org's agent if it has one (Free allows 1 agent), else register one.
+//    Three types: 'ai', 'human', 'resource'.
+const existingAgents = await chronary.agents.list({ limit: 1 }).getPage(0, 1);
+const agent =
+  existingAgents.data[0] ??
+  (await chronary.agents.create({ name: 'Quickstart Bot', type: 'ai' }));
 console.log(`Agent: ${agent.id}`);
 
-// 2. Give the agent a calendar.
-const calendar = await chronary.calendars.create({
-  agentId: agent.id,
-  name: 'Quickstart Calendar',
-  timezone: 'America/New_York',
-});
+// 2. Reuse the agent's calendar if it has one (Free allows 1 calendar), else create one.
+const existingCalendars = await chronary.calendars
+  .list({ agentId: agent.id, limit: 1 })
+  .getPage(0, 1);
+const calendar =
+  existingCalendars.data[0] ??
+  (await chronary.calendars.create({
+    agentId: agent.id,
+    name: 'Quickstart Calendar',
+    timezone: 'America/New_York',
+  }));
 console.log(`Calendar: ${calendar.id}`);
 console.log(`iCal feed (subscribe in Apple/Google Calendar): ${calendar.ical_url}`);
 

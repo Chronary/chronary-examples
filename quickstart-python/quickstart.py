@@ -13,15 +13,22 @@ if not api_key:
 
 chronary = Chronary(api_key=api_key)
 
-# 1. Register an agent. Three types: 'ai', 'human', 'resource'.
-agent = chronary.agents.create(name="Quickstart Bot", type="ai")
+# 1. Reuse the org's agent if it has one (Free allows 1 agent), else register one.
+#    Three types: 'ai', 'human', 'resource'.
+agents = chronary.agents.list(limit=1).data
+agent = agents[0] if agents else chronary.agents.create(name="Quickstart Bot", type="ai")
 print(f"Agent:    {agent.id}")
 
-# 2. Give the agent a calendar.
-calendar = chronary.agents.calendars.create(
-    agent.id,
-    name="Quickstart Calendar",
-    timezone="America/New_York",
+# 2. Reuse the agent's calendar if it has one (Free allows 1 calendar), else create one.
+calendars = chronary.agents.calendars.list(agent.id, limit=1).data
+calendar = (
+    calendars[0]
+    if calendars
+    else chronary.agents.calendars.create(
+        agent.id,
+        name="Quickstart Calendar",
+        timezone="America/New_York",
+    )
 )
 print(f"Calendar: {calendar.id}")
 print(f"iCal feed (subscribe in Apple/Google Calendar): {calendar.ical_url}")

@@ -1,5 +1,7 @@
 # team-scheduling-bot — the hero example
 
+> **Needs Pro** (4 agents, 5 calendars, proposals). Free has 1 agent and 1 calendar, and proposals are Pro-only. See <https://chronary.ai/pricing>.
+
 This is the demo that sells Chronary. In ~150 lines you'll see four things no other calendar API can do in one place:
 
 1. **Three agent types collaborating** — `human` × 3 and `resource` × 1.
