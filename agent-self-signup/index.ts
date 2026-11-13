@@ -10,7 +10,8 @@
  */
 
 import { createInterface } from 'node:readline/promises';
-import { Chronary, isAgentSignUpNewOrg } from '@chronary/sdk';
+import { Chronary } from '@chronary/sdk';
+import { DEFAULT_BASE_URL, classifySignUp, signUpWithCurrentTerms } from './signup.js';
 
 /** Show a key's prefix and last 4 characters only — never log a full API key. */
 function maskKey(key: string): string {
@@ -20,26 +21,35 @@ function maskKey(key: string): string {
 
 const email = process.env.SIGNUP_EMAIL;
 if (!email) throw new Error('SIGNUP_EMAIL is not set');
+const baseUrl = process.env.CHRONARY_BASE_URL ?? DEFAULT_BASE_URL;
 
-// Step 1 — unauthenticated client requests an OTP.
-const unauth = new Chronary();
-const signUp = await unauth.agentAuth.signUp({
-  email,
-  agent_name: 'Self-Signup Bot',
-  // The ToS version the agent has accepted. If this is stale the API returns
-  // 409 `tos_version_stale` with `current_version` in the error body; production
-  // apps should catch that, present the new ToS, and retry.
-  tos_version: 'pre-launch',
-});
+// Step 1 — unauthenticated client requests an OTP. The helper reads the current
+// Terms version from GET /v1/auth/terms/current (never hardcode it: it rolls
+// forward when the Terms change) and retries once with `current_version` if the
+// API answers 409 `tos_version_stale`. Sending `tos_version` accepts the Terms
+// for the owner of SIGNUP_EMAIL, so only sign up an inbox you are authorized for.
+const unauth = new Chronary({ baseUrl });
+const outcome = classifySignUp(
+  await signUpWithCurrentTerms(unauth, { email, agent_name: 'Self-Signup Bot' }, { baseUrl }),
+);
 
-if (!isAgentSignUpNewOrg(signUp)) {
-  // Existing-org dedup branch — same opaque message, no credentials. To prevent
-  // email enumeration, the API does not tell you whether the email already had
-  // an account. Sign in to the console with this email instead.
-  console.log(signUp.message);
-  console.log('That email is already registered. Sign in via the console.');
+if (outcome.kind === 'waitlisted') {
+  // HTTP 202: sign-ups are paused (waitlist mode or early access full). No key
+  // is issued, and the body is the same for every email.
+  console.log(outcome.message);
+  console.log('Sign-ups are paused right now, so no key was issued. Try again later.');
   process.exit(0);
 }
+
+if (outcome.kind === 'no_credentials') {
+  // No credentials in the body. To prevent email enumeration the API does not
+  // say why (the email may already have an account), so don't guess either.
+  console.log(outcome.message);
+  console.log('No key was issued. If this inbox already has a Chronary account, sign in at https://console.chronary.ai.');
+  process.exit(0);
+}
+
+const signUp = outcome;
 
 console.log(`Org created:        ${signUp.org_id}`);
 console.log(`Agent created:      ${signUp.agent_id}`);
@@ -54,7 +64,7 @@ rl.close();
 // Construct a second client with the restricted key. Until OTP verification it
 // can only call /v1/agent/verify; after verification the same key unlocks the
 // full API.
-const authed = new Chronary({ apiKey: signUp.api_key });
+const authed = new Chronary({ apiKey: signUp.api_key, baseUrl });
 const verified = await authed.agentAuth.verify({ otp });
 console.log(`\n${verified.message}`);
 

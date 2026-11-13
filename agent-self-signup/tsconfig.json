@@ -9,5 +9,5 @@
     "noEmit": true,
     "lib": ["ES2022"]
   },
-  "include": ["index.ts"]
+  "include": ["index.ts", "signup.ts", "signup.test.ts"]
 }

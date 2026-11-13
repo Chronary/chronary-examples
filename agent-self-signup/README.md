@@ -25,8 +25,8 @@ Store the key in your secret manager — anything an org-level key can do, this 
 
 - **`POST /v1/agent/sign-up`** — unauthenticated. Returns `org_id`, `agent_id`, and a restricted `api_key` that is only valid for the verify endpoint.
 - **`POST /v1/agent/verify`** — authenticated with the restricted key. Unlocks the same key for full API access.
-- **Anti-enumeration design** — if the email is already registered, the response is opaque (`isAgentSignUpNewOrg` returns false, no credentials leaked).
-- **`tos_version`** — explicit consent to the terms version the agent reviewed.
+- **`tos_version`** — explicit consent to the Terms version the agent reviewed. The example reads it from `GET /v1/auth/terms/current` instead of hardcoding it (it rolls forward whenever the Terms change), and if the Terms change between that read and the sign-up, it retries once with the `current_version` from the `409 tos_version_stale` error. Sending it accepts the Terms for the owner of the email, so only sign up an inbox you are authorized for.
+- **Three outcomes** — a new org with a restricted key; `202 { waitlisted: true }` while sign-ups are paused (no key, try again later); or a body with only a `message` and no credentials. The last one is deliberately opaque: to prevent email enumeration the API never says whether the email already had an account, so the example prints the API's message and does not guess.
 
 ## Why this matters
 
@@ -54,32 +54,23 @@ The script never prints the full key: it shows only the prefix and last four cha
 
 For headless setups (CI, agent runtimes), replace the readline prompt with whatever can fetch the OTP — IMAP polling, a webhook receiver, a transactional-email API like Resend. The verify call works the same way.
 
-## Local development (pre-soft-launch)
+## Tests
 
-`@chronary/sdk` is not yet on npm — see [issue #222](https://github.com/Chronary/chronary/issues/222). To run against the workspace build, swap the registry ref for a local file path:
+`signup.ts` holds the sign-up logic (Terms lookup, stale-version retry, outcome classification) with an injectable `fetch` and no prompts or process exits, and `signup.test.ts` covers it offline against a mocked `fetch`:
 
 ```bash
-# 1. Build the workspace package
-pnpm --filter @chronary/sdk build
-
-# 2. In this example's package.json, change:
-#      "@chronary/sdk": "^0.1.0"
-#    to:
-#      "@chronary/sdk": "file:../../packages/sdk"
-
-# 3. Install and run
-cd examples/agent-self-signup
-npm install
-npm start
+npm test
 ```
 
-Don't commit the `package.json` change — it's only for pre-soft-launch local runs.
+To point the example at another deployment, set `CHRONARY_BASE_URL` (defaults to `https://api.chronary.ai`).
 
 ## Files
 
 - [`index.ts`](./index.ts) — the entire flow.
-- [`.env.example`](./.env.example) — required environment variable.
+- [`signup.ts`](./signup.ts) — sign-up helpers: current Terms version, stale-version retry, outcome classification.
+- [`signup.test.ts`](./signup.test.ts) — offline tests for the helpers.
+- [`.env.example`](./.env.example) — environment variables.
 
 ---
 
-Last verified: 2026-04-24 against `@chronary/sdk@0.1.0`.
+Last verified: 2026-11-12 against `@chronary/sdk@0.9.0`.
