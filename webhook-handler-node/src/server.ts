@@ -1,8 +1,9 @@
 /**
  * Webhook receiver for Chronary events.
  *
- * Verifies the HMAC-SHA256 signature, reads X-Chronary-Event-Type, parses the
- * raw payload JSON, and dispatches to a typed handler per event type. The same
+ * Verifies the HMAC-SHA256 signature (X-Signature-V2, which also covers
+ * X-Chronary-Event-Type and X-Delivery-Id), parses the raw payload JSON, and
+ * dispatches to a typed handler per event type. The same
  * pattern works on any Hono-compatible runtime (Node, Bun, Cloudflare Workers,
  * Vercel Edge).
  */
@@ -35,8 +36,9 @@ app.post('/webhooks/chronary', async (c) => {
   try {
     await handleEvent(event);
   } catch (error) {
-    // Return 500 so Chronary retries. Idempotency: every payload includes
-    // X-Delivery-Id; persist it server-side and skip duplicates.
+    // Return 500 so Chronary retries. Idempotency: every delivery carries a
+    // signed X-Delivery-Id (event.deliveryId from @chronary/sdk 0.14.0);
+    // persist it server-side and skip duplicates.
     console.error('✗ handler error:', error);
     return c.json({ error: 'handler failed' }, 500);
   }

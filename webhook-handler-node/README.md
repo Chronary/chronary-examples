@@ -14,7 +14,7 @@ Listening for Chronary webhooks at http://localhost:3000/webhooks/chronary
 
 ## What this demonstrates
 
-- **`constructEvent(rawBody, headers, secret)`** — verifies signature, reads `X-Chronary-Event-Type`, and returns `{ type, data }` where `data` is the parsed raw payload body. Uses `crypto.subtle.verify` under the hood, so it runs on Node, Bun, Cloudflare Workers, Deno, and Vercel Edge with no extra deps.
+- **`constructEvent(rawBody, headers, secret)`** — verifies the `X-Signature-V2` signature, which covers the body and the `X-Timestamp`, `X-Delivery-Id`, `X-Chronary-Event-Type`, `X-Chronary-Test` and `X-Chronary-Replay-Of` headers, and returns `{ type, data }` where `data` is the parsed raw payload body (from `@chronary/sdk` 0.14.0 also `deliveryId`, `test` and `replayOf`, all signed). A delivery relabelled as another event type or given a fresh delivery id fails verification. That protection needs `@chronary/sdk` 0.14.0 or later: raise the `@chronary/sdk` range in `package.json` to `^0.14.0` (older versions check only the v1 `X-Signature`, which does not cover those headers). Uses `crypto.subtle.verify` under the hood, so it runs on Node, Bun, Cloudflare Workers, Deno, and Vercel Edge with no extra deps.
 - **Replay protection** — Chronary's `X-Timestamp` header is checked against a 5-minute tolerance. Old payloads are rejected.
 - **Typed event router** — the `WebhookEvent.type` discriminant covers all 17 event types Chronary emits today (`agent.*`, `event.*`, `event.hold_*`, `proposal.*`, `webhook.deactivated`).
 - **Retry-aware error handling** — 400 on bad signature (Chronary backs off and retries: immediate → +1m → +5m → +30m → deactivates after 50 failures); 500 on handler errors (also retried).
